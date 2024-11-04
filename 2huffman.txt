@@ -1,0 +1,180 @@
+Huffman Encoding using a greedy strategy.
+
+
+import heapq
+
+class node:
+    def __init__(self,freq,symbol,left=None,right=None):
+        self.freq = freq
+        self.symbol =symbol
+        self.left=left
+        self.right=right
+        self.huff=''
+    
+    def __lt__(self,nxt):
+        return self.freq<nxt.freq
+    
+    
+def printNodes(node, val=''):
+    newVal = val + str(node.huff)
+    if(node.left):
+        printNodes(node.left, newVal)
+    if(node.right):
+        printNodes(node.right, newVal)
+    
+    if(not node.left and not node.right): 
+        print(f"{node.symbol} -> {newVal}") 
+    
+    
+    
+chars = ['a', 'b', 'c', 'd', 'e', 'f'] 
+freq = [50, 10, 30, 5, 3, 2] 
+
+nodes=[]
+
+for x in range(len(chars)):
+    heapq.heappush(nodes, node(freq[x],chars[x]))
+    
+while len(nodes)>1:
+    left = heapq.heappop(nodes)
+    right = heapq.heappop(nodes)
+    left.huff=0
+    right.huff=1
+    
+    newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+    heapq.heappush(nodes,newNode)
+    
+printNodes(nodes[0])
+
+a -> 0
+b -> 100
+d -> 1010
+f -> 10110
+e -> 10111
+c -> 11
+
+
+def decode_huff(encoded,huffman_tree):
+    current_node = huffman_tree
+    decoded_arr = []
+    
+    for bit in encoded:
+        if bit=='0':
+            current_node = current_node.left
+        if bit=='1':
+            current_node = current_node.right
+        
+        if not current_node.left and not current_node.right:
+            decoded_arr.append(current_node.symbol)
+            current_node = huffman_tree
+        
+    decoded = ''.join(decoded_arr)
+    return decoded
+
+encoded = input("Enter the string : ")
+decoded = decode_huff(encoded,nodes[0])
+print(decoded)
+
+Enter the string : 1000111001
+bacb
+
+===
+
+#Huffman encoding
+
+import heapq  # Importing the heapq library for heap operations
+
+def calculate_frequency(s): 
+    frequency = {}  # Initialize an empty dictionary to store character frequencies
+    for char in s:
+        if char not in frequency:  # If character is not already in the dictionary
+            frequency[char] = 0    # Initialize its frequency to 0
+        frequency[char] += 1       # Increment frequency count for the character
+    return frequency  # Return the frequency dictionary
+
+def huffman_encode(frequency):
+    # Create a list of lists, where each inner list contains the weight (frequency)
+    # and a list with the character and an empty string (for the Huffman code)
+    heap = [[weight, [char, ""]] for char, weight in frequency.items()]
+    
+    # Convert the list into a min-heap based on frequency (weight) using heapify
+    heapq.heapify(heap)
+    
+    # While there's more than one element in the heap
+    while len(heap) > 1:
+        # Remove the two elements with the smallest frequencies
+        lo = heapq.heappop(heap)  # Pop the smallest item from the heap
+        hi = heapq.heappop(heap)  # Pop the next smallest item from the heap
+        
+        # Assign "0" to all characters in the left (smallest) part
+        for pair in lo[1:]:
+            pair[1] = '0' + pair[1]
+        
+        # Assign "1" to all characters in the right (second smallest) part
+        for pair in hi[1:]:
+            pair[1] = '1' + pair[1]
+        
+        # Push a new item into the heap with the combined weight and characters
+        heapq.heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
+    
+    # Pop the final element in the heap, sort by code length and return the characters and their codes
+    return sorted(heapq.heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+
+# Input and process
+s = input("Enter the string or words to generate their Huffman encoding: ")
+frequency = calculate_frequency(s)  # Calculate frequency of each character
+huff = huffman_encode(frequency)    # Generate Huffman codes
+
+# Display results
+print(f"Frequency of the characters in the given string: {frequency}")
+print("Char | Huffman code ")
+print(" ")
+for char, huffman_code in huff:
+    print(f" {char} | {huffman_code}")
+
+
+
+=================================================================================================================
+
+Huffman encoding is a compression algorithm that assigns variable-length codes to input characters based on their frequencies. Characters that occur more frequently are assigned shorter codes, while less frequent characters are assigned longer codes. This results in efficient data encoding and reduction in file size.
+
+Frequent characters are assigned shorter codes, while less frequent characters receive longer codes. This ensures that the overall size of the encoded data is minimized.
+
+The algorithm builds a binary tree called a Huffman tree. Each character is represented by a leaf node, and the path from the root to the leaf determines the character's code. The process involves:
+
+Creating nodes for each character and its frequency.
+Merging the two nodes with the smallest frequencies until only one node remains, which becomes the root of the tree.
+Assigning binary codes based on the tree structure (0 for left, 1 for right).
+Huffman coding is widely used in various compression formats like ZIP files, JPEG images, and MP3 audio files due to its efficiency in encoding data.
+Decoding Huffman Codes:
+
+The decode_huff function takes an encoded string and the Huffman tree, traversing the tree based on the bits (0 for left and 1 for right) to reconstruct the original characters.
+
+Huffman coding is a lossless data compression algorithm that is used to reduce the size of files without losing any information. It works by assigning variable-length codes to input characters based on their frequencies of occurrence in the data.
+
+How does Huffman coding ensure that no two codes are the same?
+
+By constructing a binary tree where each character is represented by a unique path, ensuring that prefix codes do not overlap.
+What are the advantages and disadvantages of using Huffman coding?
+
+Advantages include efficient compression and lossless encoding; disadvantages may include the need for a frequency table and inefficiency with small data sets.
+
+Can Huffman coding be used for real-time data compression? Why or why not?
+
+It can be used, but the overhead of building the frequency table and tree may introduce latency.
+
+
+What is the time complexity of building a Huffman tree?
+
+The time complexity is 
+𝑂
+(
+𝑛
+log
+⁡
+𝑛
+)
+O(nlogn), where 
+𝑛
+n is the number of unique characters.
+

@@ -1,0 +1,186 @@
+Write a program to solve a 0-1 Knapsack problem
+using dynamic programming or branch and bound
+strategy
+
+# Memoization
+def knapSack(W, wt, val, n):
+    def func(W, wt, val, n, dp):
+        if n == 0 or W == 0:
+            return 0  # Base Condition
+
+        if dp[n][W] != -1:
+            return dp[n][W]
+
+        if wt[n - 1] <= W:
+            dp[n][W] = max(val[n - 1] + func(W - wt[n - 1], wt, val, n - 1, dp), func(W, wt, val, n - 1, dp))
+            return dp[n][W]
+        else:
+            dp[n][W] = func(W, wt, val, n - 1, dp)
+            return dp[n][W]
+
+    # Base Condition
+    dp = [[-1 for _ in range(W + 1)] for _ in range(n + 1)]
+    for row in dp:
+        row[0] = 0
+
+    return func(W, wt, val, n, dp)
+
+# Input from the user
+n = int(input("Enter the number of items: "))
+W = int(input("Enter the knapsack capacity: "))
+
+wt = list(map(int, input("Enter the weights of the items separated by space: ").split()))
+val = list(map(int, input("Enter the values of the items separated by space: ").split()))
+
+result = knapSack(W, wt, val, n)
+print("Maximum value:", result)
+
+Enter the number of items: 3
+Enter the knapsack capacity: 5
+Enter the weights of the items separated by space: 4 5 1
+Enter the values of the items separated by space: 1 2 3
+Maximum value: 4
+
+
+# Tabulation Approach
+
+def knapsack_01(n, W, wt, val):
+    dp = [[0 for _ in range(W + 1)] for _ in range(n + 1)]
+
+    for i in range(n + 1):
+        for j in range(W + 1):
+            if i == 0 or j == 0:
+                dp[i][j] = 0
+
+    for i in range(1, n + 1):
+        for j in range(1, W + 1):
+            if wt[i - 1] <= j:
+                dp[i][j] = max(val[i - 1] + dp[i - 1][j - wt[i - 1]], dp[i - 1][j])
+            else:
+                dp[i][j] = dp[i - 1][j]
+
+    return dp[n][W]
+
+# Input from the user
+n = int(input("Enter the number of items: "))
+W = int(input("Enter the knapsack capacity: "))
+
+wt = list(map(int, input("Enter the weights of the items separated by space: ").split()))
+val = list(map(int, input("Enter the values of the items separated by space: ").split()))
+
+result = knapsack_01(n, W, wt, val)
+print("Maximum value:", result)
+
+Enter the number of items: 3
+Enter the knapsack capacity: 4
+Enter the weights of the items separated by space: 4 5 1
+Enter the values of the items separated by space: 1 2 3
+Maximum value: 3
+
+
+def Knapsack(W, wt, val, n):
+    table=[[0 for _ in range(W+1)] for _ in range(n+1)]
+    for i in range(n+1):
+        for j in range(W+1):
+            if i==0 or j==0:
+                table[i][j]=0
+            elif wt[i-1]<=j:
+                table[i][j]= max(table[i-1][j], val[i-1]+table[i-1][j-wt[i-1]])
+            else:
+                table[i][j]= table[i-1][j]
+    return table[n][W]
+
+if __name__=='__main__':
+    profit= [60,100,120]
+    weight= [10,20,30]
+    W= 50
+    n= len(profit)
+    print("Total knapsack weight is:")
+    print(Knapsack(W, weight, profit, n))
+
+Total knapsack weight is:
+220
+
++++++
+
+def Knapsack_using_DP(profit,weight,capacity):
+    n=len(profit)
+    dp=[[0 for _ in range(capacity+1)] for _ in range(n+1)]
+    
+    for i in range(n+1):
+        for w in range(capacity+1):
+            if w==0 or i==0:
+                dp[i][w]=0
+            elif weight[i-1]<=w:
+                dp[i][w]=max(profit[i-1]+dp[i-1][w-weight[i-1]],dp[i-1][w])
+            else:
+                dp[i][w]=dp[i-1][w]
+    selected_items=[]
+    i,w=n,capacity
+    while i>0 and w>0:
+        if dp[i][w]!=dp[i-1][w]:
+            selected_items.append(i-1)
+            w=w-weight[i-1]
+        i=i-1
+    return dp[n][capacity],selected_items
+    
+if __name__ == "__main__":
+    n=int(input("Enter the total no of objects: "))
+    profit=[]
+    weight=[]
+    for i in range(n):
+        ele=int(input(f"Enter the profit of {i+1}th object: "))
+        profit.append(ele)
+    for i in range(n):
+        ele=int(input(f"Enter the weight of {i+1}th object: "))
+        weight.append(ele)
+    capacity=int(input("Enter the capacity of the element: "))
+    ans,selected_items=Knapsack_using_DP(profit,weight,capacity)
+    print("The maximum profit is: ",ans)
+    for i in selected_items:
+        print(f'item: {i+1} and its weight: {weight[i]} and profit: {profit[i]}')
+
+
+Enter the total no of objects: 2
+Enter the profit of 1th object: 50
+Enter the profit of 2th object: 100
+Enter the weight of 1th object: 60
+Enter the weight of 2th object: 120
+Enter the capacity of the element: 500
+The maximum profit is:  150
+item: 2 and its weight: 120 and profit: 100
+item: 1 and its weight: 60 and profit: 50
+
+
+====================================================================================================================
+
+What is the 0-1 Knapsack Problem?
+
+The 0-1 Knapsack Problem is a combinatorial optimization problem where, given a set of items with specific weights and values, we need to determine the maximum value achievable within a limited capacity, without breaking items (i.e., you either take an item or leave it).
+What is the difference between the Memoization and Tabulation approaches?
+
+Memoization is a top-down approach that uses recursion with caching to store intermediate results, avoiding redundant calculations. Tabulation is a bottom-up approach that builds solutions iteratively using a 2D array.
+What does dp[i][j] represent in the tabulation solution?
+
+In the tabulation solution, dp[i][j] represents the maximum profit achievable with the first i items and a knapsack capacity of j.
+Why do we need the dp table in the memoization approach?
+
+The dp table stores results of subproblems (for different item counts and capacities), which avoids recalculating the values of already-solved subproblems, improving efficiency.
+How does the code determine which items were selected in the final solution?
+
+The Knapsack_using_DP function traces back through the dp table to see which items contribute to the optimal solution by checking if values differ between current and previous states.
+Explain how max(val[n - 1] + ... , ...) works in the code.
+
+This part checks if including the current item increases the profit more than excluding it. It adds the value of the current item to the profit of the remaining capacity, then takes the maximum of including or excluding.
+What is the time complexity of this DP-based 0-1 Knapsack solution?
+
+The time complexity is O(n * W), where n is the number of items and W is the knapsack capacity, as it fills an n x W table.
+What is the difference between 0-1 and fractional knapsack problems?
+
+In a 0-1 knapsack problem, items cannot be divided, so each item is either fully included or excluded. In a fractional knapsack problem, items can be divided into fractions to maximize value within the capacity.
+How does this program handle the base case?
+
+In both memoization and tabulation approaches, the base case is defined as having zero capacity or zero items left to consider, resulting in a value of zero for those conditions.
+What does the lambda function in the fractional knapsack code do?
+
+In the fractional knapsack code, the lambda function sorts items by their value-to-weight ratio in descending order to maximize value per unit weight.

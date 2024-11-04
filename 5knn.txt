@@ -1,0 +1,100 @@
+Implement K-Nearest Neighbors algorithm(diabetes)
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+from sklearn import preprocessing
+
+df = pd.read_csv('diabetes.csv')
+
+df.info()
+
+df.head()
+
+df.corr().style.background_gradient(cmap='BuGn')
+
+df.drop(['BloodPressure', 'SkinThickness'], axis=1, inplace=True)
+
+df.isna().sum()
+
+df.describe()
+
+hist = df.hist(figsize=(20,16))
+
+X=df.iloc[:, :df.shape[1]-1]       #Independent Variables
+y=df.iloc[:, -1]                   #Dependent Variable
+X.shape, y.shape
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=8)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+def knn(X_train, X_test, y_train, y_test, neighbors, power):
+    model = KNeighborsClassifier(n_neighbors=neighbors, p=power)
+    # Fit and predict on model
+    # Model is trained using the train set and predictions are made based on the test set. Accuracy scores are calculated for the model.
+    y_pred=model.fit(X_train, y_train).predict(X_test)
+    print(f"Accuracy for K-Nearest Neighbors model \t: {accuracy_score(y_test, y_pred)}")
+
+    cm = confusion_matrix(y_test, y_pred)
+    print(f'''Confusion matrix :\n
+    | Positive Prediction\t| Negative Prediction
+    ---------------+------------------------+----------------------
+    Positive Class | True Positive (TP) {cm[0, 0]}\t| False Negative (FN) {cm[0, 1]}
+    ---------------+------------------------+----------------------
+    Negative Class | False Positive (FP) {cm[1, 0]}\t| True Negative (TN) {cm[1, 1]}\n''')
+    cr = classification_report(y_test, y_pred)
+    print('Classification report : \n', cr)
+
+param_grid = {
+    'n_neighbors': range(1, 51),
+    'p': range(1, 4)
+}
+grid = GridSearchCV(estimator=KNeighborsClassifier(), param_grid=param_grid, cv=5)
+grid.fit(X_train, y_train)
+grid.best_estimator_, grid.best_params_, grid.best_score_
+
+knn(X_train, X_test, y_train, y_test, grid.best_params_['n_neighbors'], grid.best_params_['p'])
+
+================================================================================================================================
+
+What is the purpose of the K-Nearest Neighbors algorithm?
+
+Answer: K-Nearest Neighbors is a classification algorithm that assigns a data point to the most common class among its nearest neighbors.
+What does StandardScaler do?
+
+Answer: It scales features so that they have a mean of 0 and standard deviation of 1, which helps in ensuring that features with large values don’t dominate the KNN distance calculations.
+
+What does the parameter n_neighbors mean?
+
+Answer: n_neighbors specifies the number of nearest neighbors considered in the KNN algorithm for classifying a data point.
+What is the purpose of GridSearchCV in this code?
+
+Answer: GridSearchCV performs hyperparameter tuning by testing various values of n_neighbors and p to find the best parameters that maximize model accuracy.
+What is the function of the p parameter in KNeighborsClassifier?
+
+Answer: The p parameter determines the distance metric used. For example, p=1 uses Manhattan distance, while p=2 uses Euclidean distance.
+
+Explain the use of accuracy_score in the code.
+
+Answer: accuracy_score calculates the accuracy of predictions by comparing them to the actual labels in the test set.
+What is a confusion matrix?
+
+Answer: A confusion matrix is a table that describes the performance of a classification model by showing the counts of True Positives, False Positives, False Negatives, and True Negatives.
+How does KNN classify a new data point?
+
+Answer: KNN finds the k nearest data points (neighbors) in the training set and assigns the new point to the most common class among those neighbors.
+Why might you drop columns like BloodPressure and SkinThickness?
+
+Answer: Columns can be dropped to reduce noise or redundancy if they don’t contribute significantly to prediction or are correlated with other variables.
+What does classification_report provide?
+
+Answer: classification_report provides detailed metrics for the model, such as precision, recall, and F1-score for each class, helping to evaluate performance beyond accuracy.
+
+

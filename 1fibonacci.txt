@@ -1,0 +1,222 @@
+Write a program to calculate Fibonacci numbers and find
+its step count.(recursive and non-recursive)
+
+import time
+
+def fiboi(n):
+    if n==0:
+        return 0
+    if n==1:
+        return 1
+    prev,curr = 0,1
+    
+    for _ in range(2,n+1):
+        prev,curr = curr,curr+prev
+    
+    return curr
+
+def fibor(n):
+    if n==0:
+        return 0
+    if n==1:
+        return 1
+    
+    return fibor(n-1)+fibor(n-2)
+
+if __name__=="__main__":
+    
+    n=8
+    
+#     Iteration: - 
+    start_time = time.time()
+    result = fiboi(n)
+    end_time = time.time()
+    print(f"Non-Recursive Fibonacci: F({n}) = {result}, Time taken: {end_time - start_time} seconds")
+    
+#     Recursion: -
+    start_time = time.time()
+    result = fibor(n)
+    end_time = time.time()
+    print(f"Recursive Fibonacci: F({n}) = {result}, Time taken: {end_time - start_time} seconds")
+
+
+def fibo(n):
+    result=[]
+    if n==0:
+        result.append(0)
+        return 0
+    if n==1:
+        result.append(1)
+    
+    prev,curr = 0,1
+    
+    for _ in range(2,n+1):
+        prev,curr = curr,curr+prev
+        result.append(curr)
+    
+    return result
+
+
+n=8
+result = fibo(n)
+print(result)
+
+
+def fiboDP(n,dp):
+    if n==0:
+        return 0
+    if n==1:
+        return 1
+    
+    if dp[n]!=-1:
+        return dp[n]
+    
+    dp[n] = fiboDP(n-1,dp)+fiboDP(n-2,dp)
+    return dp[n]
+
+n=8
+dp = [-1]*(n+1)
+result = fiboDP(n,dp)
+print(result)
+
+
+n=8
+dp = [-1]*(n+1)
+dp[0]=0
+dp[1]=1
+
+for i in range(2,n+1):
+    dp[i] = dp[i-1]+dp[i-2]
+
+print(dp)
+
+
+===
+recursive
+
+def printFibonacci(n, a=0, b=1):
+    if n > 0:
+        n3 = a + b
+        print(n3, end=" ")
+        printFibonacci(n - 1, b, n3)
+
+if __name__ == "__main__":
+    n = int(input("Enter the number of elements: "))
+    print("Fibonacci Series: ", end="")
+    print("0 1 ", end="")
+    printFibonacci(n - 2)  # n-2 because 2 numbers are already printed
+
+non-recursive
+
+def print_fibonacci(number):
+    """Prints the Fibonacci series up to the specified number of elements.
+
+    Args:
+        number: The number of elements to print.
+    """
+
+    n1, n2 = 0, 1
+    print(n1, n2, end=" ")
+
+    for i in range(2, number):
+        n3 = n1 + n2
+        print(n3, end=" ")
+        n1, n2 = n2, n3
+
+if __name__ == "__main__":
+    number = int(input("Enter the number of elements: "))
+    print_fibonacci(number)
+    
+
+==========================================================================================================================
+
+In the Fibonacci sequence, starting from 0 and 1, each number is the sum of the two previous ones:
+
+Example:
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+
+Here:
+
+0 + 1 = 1
+1 + 1 = 2
+1 + 2 = 3
+2 + 3 = 5, and so on.
+
+
+What is the time complexity of calculating Fibonacci numbers recursively?
+
+The time complexity is 
+𝑂
+(
+2
+𝑛
+)
+O(2 
+n
+ ) due to the repeated calculations in each recursive call.
+Why is the non-recursive version of Fibonacci more efficient than the recursive one?
+
+The non-recursive version has a linear time complexity 
+𝑂
+(
+𝑛
+)
+O(n), avoiding redundant calculations present in the recursive approach.
+Explain the purpose of dynamic programming in calculating Fibonacci numbers.
+
+Dynamic programming stores previously calculated Fibonacci values to avoid redundant calculations, reducing time complexity to 
+𝑂
+(
+𝑛
+)
+O(n).
+
+What is memoization? How does it help in recursive Fibonacci calculations?
+
+Memoization is a technique of storing the results of expensive function calls to reuse them, reducing redundant calculations and improving efficiency.
+What is the role of base cases in the recursive Fibonacci function?
+
+Base cases (for 
+𝑛
+=
+0
+n=0 and 
+𝑛
+=
+1
+n=1) prevent the function from calling itself indefinitely and provide a stopping condition for recursion.
+How would you modify the recursive Fibonacci function to make it more efficient?
+
+By using memoization to store and reuse results of previous calculations, converting it to an 
+𝑂
+(
+𝑛
+)
+O(n) time complexity.
+What is the space complexity of the iterative Fibonacci function?
+
+The space complexity is 
+𝑂
+(
+1
+)
+O(1) as it only uses a fixed amount of memory for temporary variables.
+In what scenario is using recursion beneficial for calculating Fibonacci?
+
+Recursion might be more readable for educational purposes or very small values of 
+𝑛
+n, but it’s not optimal for large 
+𝑛
+n.
+
+Recursive: A recursive approach calculates Fibonacci numbers by calling the function within itself, breaking the problem into smaller subproblems (e.g., f(n) = f(n-1) + f(n-2)), but it can be inefficient due to repeated calculations for larger 
+𝑛
+n.
+
+Non-Recursive: A non-recursive (iterative) approach uses a loop to calculate Fibonacci numbers, maintaining a few variables to track the last two numbers, making it more efficient and straightforward with linear time complexity.
+
+Which is Better: The non-recursive approach is generally better for larger 
+𝑛
+n due to its linear time complexity and reduced overhead, while recursion can be more intuitive and easier to understand for smaller values.
+    
+    

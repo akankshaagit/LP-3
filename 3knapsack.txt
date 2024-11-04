@@ -1,0 +1,104 @@
+Solve a fractional Knapsack problem using a greedy
+method
+
+class Item:
+    def __init__(self,value,weight):
+        self.value = value
+        self.weight = weight
+        
+    
+class Solution:
+    def frac(self,W,arr,n):
+        arr.sort(key=lambda x: x.value/x.weight, reverse=True)
+        curWeight=0
+        finalValue=0
+        
+        for i in range(n):
+            if curWeight+arr[i].weight<=W:
+                curWeight+=arr[i].weight
+                finalValue+=arr[i].value
+            else:
+                remain = W-curWeight
+                finalValue+=(arr[i].value/arr[i].weight)* remain
+                break
+        return finalValue
+        
+
+if __name__=='__main__':
+    n = int(input("Enter the no. of items: "))
+    W = int(input("Enter the max weight: "))
+    
+    arr=[]
+    for i  in range(n):
+        value = float(input(f"Enter the value of item {i+1}: "))
+        weight = float(input(f"Enter the weight of the item {i+1} :"))
+        arr.append(Item(value,weight))
+        
+    obj = Solution()
+    ans = obj.frac(W,arr,n)
+    print("Maximum value : ", ans)
+
+Enter the no. of items: 3
+Enter the max weight: 50
+Enter the value of item 1: 100
+Enter the weight of the item 1 :20
+Enter the value of item 2: 60
+Enter the weight of the item 2 :10
+Enter the value of item 3: 120
+Enter the weight of the item 3 :30
+Maximum value :  240.0
+
+
+
+++++++
+
+
+def fractional_knapsack(): 
+    weights=[10,20,30] 
+    values=[60,100,120] 
+    capacity=50
+    res=0
+    # Pair : [Weight,value]
+    for pair in sorted(zip(weights,values), key= lambda x: x[1]/x[0],reverse=True):
+        if capacity<=0:        # Capacity completed - Bag fully filled
+            break
+        if pair[0]>capacity: # Current's weight with highest value/weightratio Available Capacity
+            res+=int(capacity * (pair[1]/pair[0]))    # Completely fill the bag
+            capacity=0
+        elif pair[0]<=capacity: # Take the whole object
+            res+=pair[1] 
+            capacity-=pair[0]
+    print(res)
+if __name__ =="__main__":      # checks if the script is being run directly
+    fractional_knapsack()
+
+===============================================================================================================
+
+What is the Fractional Knapsack Problem?
+The Fractional Knapsack Problem involves selecting items with given weights and values to maximize the total value in a knapsack that has a fixed weight capacity, allowing for fractional amounts of items.
+
+The knapsack is a common problem in combinatorial optimization, which refers to a scenario where a person has a knapsack (or backpack) with a limited capacity, and they need to decide which items to include in the knapsack to maximize the total value.
+
+Types of Knapsack Problems:
+
+0/1 Knapsack: You can either take the whole item or leave it (no fractions). Each item can only be included once.
+Fractional Knapsack: You can take fractions of an item. This means you can split an item and take part of it if it doesn’t fit completely.
+Bounded Knapsack: There are limits on how many of each item you can include.
+Unbounded Knapsack: You can take an unlimited number of each item.
+
+Applications:
+The knapsack problem has various applications, including resource allocation, budget management, and cargo loading, where you want to optimize the selection of items based on their value relative to their weight.
+
+Items: Each item has a weight and a value. The goal is to maximize the total value of the items selected.
+
+Capacity: The knapsack has a maximum weight capacity. The total weight of the selected items must not exceed this capacity.
+
+What are the time and space complexities of this solution?
+The time complexity is O(n log n) due to sorting the items, and the space complexity is O(n) for storing the items in the list.
+
+What will be the output of the code if all items can fit into the knapsack?
+The output will be the sum of the values of all items since the knapsack can hold their total weight without exceeding the capacity.
+
+Can this approach be applied to the 0/1 Knapsack Problem?
+No, this approach cannot be applied to the 0/1 Knapsack Problem, where items cannot be divided; a different method, such as dynamic programming, is used for that case.
+

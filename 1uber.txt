@@ -214,3 +214,48 @@ random_forest_metrics = pd.DataFrame([[
 result_tabulation = pd.concat([result_tabulation, random_forest_metrics], ignore_index=True)
 
 result_tabulation
+
+============================================================================================================================================
+
+Why is the Haversine formula used here?
+
+It accurately calculates the distance between two latitude and longitude points on the Earth’s surface, used as a feature to predict fares.
+
+What are outliers, and why are they removed?
+
+Outliers are extreme values that can skew model performance. Here, outliers in Distance and fare_amount are removed to make the model more robust.
+
+What are the key evaluation metrics used?
+
+R² (Coefficient of Determination): Indicates how well the model explains variance in the data.
+RMSE (Root Mean Squared Error): Measures the average error magnitude between predicted and actual fares.
+
+How does the random forest model differ from linear regression in this context?
+
+Linear regression fits a linear relationship between distance and fare, while random forest uses an ensemble of decision trees for more flexible, non-linear predictions.
+
+What do the scatter plots in this code show?
+
+The scatter plots visualize the relationship between Distance and fare_amount, helping to understand data trends and identify outliers.
+
+Why was the pickup_datetime column dropped after feature extraction?
+
+Since pickup_datetime has been decomposed into individual features (hour, day, month, etc.), the original column is no longer needed and is removed to avoid redundancy.
+
+How does the R² score differ from RMSE, and what does each tell you about model performance?
+
+R² indicates how much variance in the data the model explains (higher is better), while RMSE measures the average prediction error in the same units as the target variable. Low RMSE and high R² indicate a good fit.
+
+RMSE ROOT MEAN SQUARED ERROr : focuses on the error magnitude between predictions and actual values.
+R² shows how well the model captures the variance in the data.
+
+Regression is a statistical method used to model the relationship between a dependent variable and one or more independent variables, predicting the output based on input values.
+
+
+
+
+
+
+
+
+

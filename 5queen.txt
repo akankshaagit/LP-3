@@ -1,0 +1,321 @@
+Design 8-Queens matrix having first Queen placed. Use
+backtracking to place remaining Queens to generate the
+final 8-queen’s matrix
+
+class NQBacktracking:
+    def __init__(self, x_, y_):
+        """self.ld is an array where its indices indicate row-col+N-1
+        (N-1) is for shifting the difference to store negative indices"""
+        self.ld = [0] * 30
+
+        """ self.rd is an array where its indices indicate row+col and used
+        to check whether a queen can be placed on right diagonal or not"""
+        self.rd = [0] * 30
+
+        """column array where its indices indicates column and
+        used to check whether a queen can be placed in that row or not"""
+        self.cl = [0] * 30
+
+        """Initial position of 1st queen"""
+        self.x = x_
+        self.y = y_
+
+    def printSolution(self, board):
+        """A utility function to print solution"""
+        print(
+            "N Queen Backtracking Solution:\nGiven initial position of 1st queen at row:",
+            self.x,
+            "column:",
+            self.y,
+            "\n",
+        )
+        for line in board:
+            print(" ".join(map(str, line)))
+
+    def solveNQUtil(self, board, col):
+        """A recursive utility function to solve N
+        Queen problem"""
+
+        # base case: If all queens are placed then return True
+        if col >= N:
+            return True
+
+        # Overlook the column where 1st queen is placed
+        if col == self.y:
+            return self.solveNQUtil(board, col + 1)
+
+        for i in range(N):
+            # Overlook the row where 1st queen is placed
+            if i == self.x:
+                continue
+            # Consider this column and try placing
+            # this queen in all rows one by one
+
+            # Check if the queen can be placed on board[i][col]
+            # A check if a queen can be placed on board[row][col].
+            # We just need to check self.ld[row-col+n-1] and self.rd[row+coln]
+            # where self.ld and self.rd are for left and right diagonal respectively
+            if (self.ld[i - col + N - 1] != 1 and self.rd[i + col] != 1) and self.cl[
+                i
+            ] != 1:
+
+                # lace this queen in board[i][col]
+                board[i][col] = 1
+                self.ld[i - col + N - 1] = self.rd[i + col] = self.cl[i] = 1
+
+                # recur to place rest of the queens
+                if self.solveNQUtil(board, col + 1):
+                    return True
+
+                # If placing queen in board[i][col]
+                # doesn't lead to a solution,
+                # then remove queen from board[i][col]
+                board[i][col] = 0  # BACKTRACK
+                self.ld[i - col + N - 1] = self.rd[i + col] = self.cl[i] = 0
+
+                # If the queen cannot be placed in
+                # any row in this column col then return False
+                # print("col:", col, "i:", i, board)
+        return False
+
+    def solveNQ(self):
+        """This function solves the N Queen problem using
+        Backtracking. It mainly uses solveNQUtil() to
+        solve the problem. It returns False if queens
+        cannot be placed, otherwise, return True and
+        prints placement of queens in the form of 1s.
+        Please note that there may be more than one
+        solutions, this function prints one of the
+        feasible solutions."""
+        board = [[0 for _ in range(N)] for _ in range(N)]
+        board[self.x][self.y] = 1
+
+        self.ld[self.x - self.y + N - 1] = self.rd[self.x + self.y] = self.cl[
+            self.x
+        ] = 1
+
+        if not self.solveNQUtil(board, 0):
+            print("Solution does not exist")
+            return False
+        self.printSolution(board)
+        return True
+
+
+if __name__ == "__main__":
+    N = 4
+    x, y = 3, 2
+
+    NQBt = NQBacktracking(x, y)
+    NQBt.solveNQ()
+
+N Queen Backtracking Solution:
+Given initial position of 1st queen at row: 3 column: 2 
+
+0 1 0 0
+0 0 0 1
+1 0 0 0
+0 0 1 0
+
+
++++++++++++++++++++++++++++
+
+
+N = 8  # Size of the board
+
+def print_solution(board):
+    for row in board:
+        print(" ".join("Q" if col == 1 else "." for col in row))
+    print()
+
+def is_safe(board, row, col):
+    # Check this row on left side
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
+
+    # Check upper diagonal on left side
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    # Check lower diagonal on left side
+    for i, j in zip(range(row, N), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    return True
+
+def solve_nq_util(board, col):
+    # If all queens are placed
+    if col >= N:
+        return True
+
+    # Try placing a queen in all rows one by one
+    for i in range(N):
+        if is_safe(board, i, col):
+            board[i][col] = 1  # Place queen
+
+            # Recur to place the rest of the queens
+            if solve_nq_util(board, col + 1):
+                return True
+
+            # If placing queen doesn't lead to a solution, BACKTRACK
+            board[i][col] = 0
+
+    return False
+
+def solve_nq(first_row, first_col):
+    board = [[0 for _ in range(N)] for _ in range(N)]  # Initialize board
+
+    # Place the first queen
+    board[first_row][first_col] = 1
+
+    # Solve for the next column
+    if not solve_nq_util(board, 1):  # Start from column 1
+        print("Solution does not exist")
+        return False
+
+    print_solution(board)
+    return True
+
+# Driver program to test above functions
+if __name__ == "__main__":
+    first_row = 0  # Change to your desired row (0-7)
+    first_col = 0  # Change to your desired column (0-7)
+    
+    # Ensure the first queen is placed within the bounds
+    if first_row >= N or first_col >= N:
+        print("Invalid position for the first queen.")
+    else:
+        solve_nq(first_row, first_col)
+
+
+Q . . . . . . .
+. . . . . . Q .
+. . . . Q . . .
+. . . . . . . Q
+. Q . . . . . .
+. . . Q . . . .
+. . . . . Q . .
+. . Q . . . . .
+
+
+
+
+
+
+
+
+class Solution:
+    def isSafe1(self, row, col, board, n):
+        # check upper element
+        duprow = row
+        dupcol = col
+
+
+        while row >= 0 and col >= 0:
+            if board[row][col] == 'Q':
+                return False
+            row -= 1
+            col -= 1
+
+
+        col = dupcol
+        row = duprow
+        while col >= 0:
+            if board[row][col] == 'Q':
+                return False
+            col -= 1
+
+
+        row = duprow
+        col = dupcol
+        while row < n and col >= 0:
+            if board[row][col] == 'Q':
+                return False
+            row += 1
+            col -= 1
+
+
+        return True
+
+
+    def solve(self, col, board, ans, n):
+        if col == n:
+            ans.append(list(board))
+            return
+
+
+        for row in range(n):
+            if self.isSafe1(row, col, board, n):
+                board[row] = board[row][:col] + 'Q' + board[row][col+1:]
+                self.solve(col+1, board, ans, n)
+                board[row] = board[row][:col] + '.' + board[row][col+1:]
+
+
+    def solveNQueens(self, n):
+        ans = []
+        board = ['.'*n for _ in range(n)]
+        self.solve(0, board, ans, n)
+        return ans
+
+
+n = 4
+obj = Solution()
+ans = obj.solveNQueens(n)
+for i in range(len(ans)):
+    print(f"Arrangement {i+1}")
+    for j in range(len(ans[0])):
+        print(ans[i][j])
+    print()
+
+Arrangement 1
+..Q.
+Q...
+...Q
+.Q..
+
+Arrangement 2
+.Q..
+...Q
+Q...
+..Q.
+
+================================================================================================================================
+
+Explain the purpose of backtracking in the N-Queens problem.
+
+Answer: Backtracking helps find the correct placement of queens by trying all possible placements, and removing them when conflicts arise, until a solution is found.
+How do we check if placing a queen is safe?
+
+Answer: We check the current row, left diagonal, and right diagonal to ensure no queen exists in these paths.
+What are ld, rd, and cl arrays used for in NQBacktracking?
+
+Answer: ld checks left diagonals, rd checks right diagonals, and cl checks columns to prevent conflicts when placing queens.
+What does solveNQUtil do?
+
+Answer: It recursively attempts to place queens on the board column by column, backtracking when necessary.
+Why is StandardScaler not required in solving the 8-Queens problem?
+
+Answer: StandardScaler is used for scaling features in machine learning, not required in 8-Queens as it’s purely a combinatorial problem without continuous data.
+What is the base case for the recursive function in the N-Queens problem?
+
+Answer: The base case is when all queens are placed (col >= N), indicating a solution has been found.
+How can we modify this code to solve the N-Queens problem for a 10x10 board?
+
+Answer: Change N = 8 to N = 10 and adjust board size in the initialization code.
+What is the output of solveNQueens(4) in the Solution class?
+
+Answer: It provides two unique 4x4 board configurations where queens are safely placed.
+How does GridSearchCV differ from backtracking in terms of problem-solving?
+
+Answer: GridSearchCV is used for hyperparameter tuning in machine learning, whereas backtracking is a method to explore and find all possible configurations in constraint satisfaction problems like N-Queens.
+Why do we use continue in the for loop of solveNQUtil?
+
+Answer: continue skips placing a queen in a row or column that already has a queen.
+What is the role of dupcol and duprow in the isSafe1 method?
+
+Answer: dupcol and duprow store original row and column values to reset the position after checking diagonals.
+Describe a practical application of the N-Queens problem.
+
+Answer: The N-Queens problem is used in testing and designing algorithms for constraint satisfaction and can be applied to task scheduling and parallel processing.

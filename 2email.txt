@@ -1,0 +1,109 @@
+Classify the email using the binary classification
+method. Email Spam detection has two states:
+a)Normal State – Not Spam
+b) Abnormal State – Spam.
+Use K-Nearest Neighbors 
+Support Vector Machine for classification. Analyze their performance.
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC, LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+from sklearn import preprocessing
+
+df = pd.read_csv('/content/drive/MyDrive/lp3/emails.csv')
+df.info()
+df.head()
+df.dtypes
+df.drop(columns=['Email No.'], inplace=True)
+df.isna().sum()
+df.describe()
+
+X=df.iloc[:, :df.shape[1]-1]       #Independent Variables
+y=df.iloc[:, -1]                   #Dependent Variable
+X.shape, y.shape
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=8)
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.25,random_state=10)
+#pip install --upgrade scikit-learn
+from sklearn.metrics import ConfusionMatrixDisplay,confusion_matrix,accuracy_score,precision_score,recall_score
+
+def report(classifier):
+    y_pred = classifier.predict(X_test)
+    cm = confusion_matrix(y_test,y_pred)
+    display = ConfusionMatrixDisplay(cm,display_labels=classifier.classes_)
+    display.plot()
+    print(f"Accuracy:  {accuracy_score(y_test,y_pred)}")
+    print(f"Precision Score:  {precision_score(y_test,y_pred)}")
+    print(f"Recall Score:  {recall_score(y_test,y_pred)}")
+
+
+from sklearn.svm import SVC
+svm = SVC(gamma='auto',random_state=10)
+svm.fit(X_train,y_train)
+
+report(svm)
+
+from sklearn.neighbors import KNeighborsClassifier
+kNN = KNeighborsClassifier(n_neighbors=10)
+kNN.fit(X_train,y_train)
+
+report(kNN)
+
+models = {
+    "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=2),
+    "Linear SVM":LinearSVC(random_state=8, max_iter=900000),
+    "Polynomical SVM":SVC(kernel="poly", degree=2, random_state=8),
+    "RBF SVM":SVC(kernel="rbf", random_state=8),
+    "Sigmoid SVM":SVC(kernel="sigmoid", random_state=8)
+}
+
+for model_name, model in models.items():
+    y_pred=model.fit(X_train, y_train).predict(X_test)
+    print(f"Accuracy for {model_name} model \t: {metrics.accuracy_score(y_test, y_pred)}")
+
+
+
+===================================================================================================================
+
+Classification: A supervised learning approach where the goal is to assign labels to data points based on input features.
+K-Nearest Neighbors: A non-parametric method that classifies data points based on their proximity to other labeled data points.
+Support Vector Machine: A classification method that finds the hyperplane that best separates the classes in the feature space.
+Model Evaluation Metrics: Metrics like accuracy, precision, and recall help understand how well a model performs.
+
+
+How does K-Nearest Neighbors classify an email?
+
+KNN classifies an email based on the majority class of its nearest neighbors in the feature space.
+
+How does the choice of the hyperparameter 
+𝑘
+k in KNN affect the model's performance?
+
+A small 
+𝑘
+k can lead to a model that is sensitive to noise (overfitting), while a large 
+𝑘
+k can smooth out the predictions too much (underfitting). The optimal 
+𝑘
+k needs to be determined through cross-validation.
+
+What are the implications of using different kernels in SVM?
+
+Different kernels (linear, polynomial, RBF, sigmoid) allow SVM to capture various data distributions. The choice of kernel can significantly affect the model’s performance and its ability to generalize.
+
+What is cross-validation, and why is it important in model training?
+
+Cross-validation is a technique to evaluate the model's performance by splitting the data into multiple subsets. It helps ensure that the model generalizes well to unseen data and reduces the risk of overfitting.
+
+Can you explain the difference between accuracy and F1 score?
+
+Accuracy measures the overall correctness of the model (proportion of total correct predictions), while the F1 score is the harmonic mean of precision and recall, providing a balance between the two, especially useful in imbalanced datasets.
+

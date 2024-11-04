@@ -1,0 +1,82 @@
+Implement K-Means clustering/ hierarchical
+clustering 
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('sales_data_sample.csv', encoding='latin1')
+df.head()
+
+df.info()
+
+df.describe()
+
+numeric_df = df.select_dtypes(include=['number'])
+
+fig = plt.figure(figsize=(12,10))
+sns.heatmap(numeric_df.corr(), annot=True, fmt='.2f')
+plt.show()
+
+numeric_df.info()
+
+df = numeric_df[['PRICEEACH', 'MSRP'  ]]
+df
+
+df.isna().sum()
+
+df.describe().T
+
+df.shape
+
+from sklearn.cluster import KMeans
+
+inertia = []
+
+for i in range(1,11):
+    clusters = KMeans(n_clusters=i, init='k-means++', random_state=42, n_init=10)
+    clusters.fit(df)
+    inertia.append(clusters.inertia_)
+    
+plt.figure(figsize=(6, 6))
+sns.lineplot(x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], y = inertia)
+
+kmeans = KMeans(n_clusters =3, random_state=42,n_init=10)
+y_kmeans = kmeans.fit_predict(df)
+y_kmeans
+
+plt.figure(figsize=(8,8))
+sns.scatterplot(x=df['PRICEEACH'], y=df['MSRP'], hue=y_kmeans)
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c = 'red', label = 'Centroids', marker='*')
+plt.legend()
+
+kmeans.cluster_centers_
+
+===================================================================================================================================
+
+What is K-Means clustering? Explain the algorithm briefly.
+
+A: K-Means clustering is an unsupervised machine learning algorithm used to partition a dataset into K distinct clusters. It works by randomly initializing K centroids, assigning data points to the nearest centroid, and then updating the centroids based on the mean of the assigned points. This process repeats until convergence, typically defined as no significant change in centroids.
+Q: How do you determine the optimal number of clusters in K-Means?
+
+A: The optimal number of clusters can be determined using the Elbow Method, which involves plotting the inertia (sum of squared distances from each point to its assigned centroid) against the number of clusters. The point where the inertia starts to decrease at a slower rate indicates the optimal number of clusters, forming an "elbow" in the plot.
+Q: What is hierarchical clustering and how does it differ from K-Means?
+
+A: Hierarchical clustering is another clustering method that builds a hierarchy of clusters either in an agglomerative (bottom-up) or divisive (top-down) manner. Unlike K-Means, which requires the number of clusters to be specified beforehand, hierarchical clustering creates a dendrogram that allows exploration of different clusterings at various levels of granularity.
+Q: What are the advantages and disadvantages of K-Means clustering?
+
+A: Advantages of K-Means include simplicity, scalability, and speed. Disadvantages include the requirement to specify the number of clusters, sensitivity to outliers, and the possibility of converging to local minima.
+Q: Why is it essential to preprocess the data before applying clustering algorithms?
+
+A: Preprocessing is crucial because clustering algorithms are sensitive to the scale and distribution of the data. Normalizing or standardizing the data ensures that all features contribute equally to the distance calculations used in clustering, improving the algorithm's performance and the validity of the resulting clusters.
+
+xplain the significance of inertia in K-Means.
+
+A: Inertia is the sum of squared distances between data points and their respective cluster centers. It measures how tightly the clusters are packed. Lower inertia values indicate more compact clusters, which typically suggest better clustering.
+Q: What are the limitations of K-Means?
+
+A: K-Means may perform poorly with non-spherical clusters, outliers, and varying densities. It also requires pre-specifying the number of clusters (k), and its results can be affected by initial cluster center choices.
+Q: Why do we plot a heatmap of correlations before clustering?
+
+A: The correlation heatmap helps in identifying relationships between variables. Highly correlated variables may contribute redundant information, affecting clustering outcomes.
